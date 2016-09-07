@@ -29,7 +29,7 @@
 }
 
 .editor .paragraph {
-  margin: 14px 0;
+  margin: 0 0;
 }
 
 /* Consecutive code blocks are nested inside a single parent <pre> (like <li>
