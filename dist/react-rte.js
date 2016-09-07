@@ -216,22 +216,10 @@ function(module, exports, __webpack_require__) {
                 var editorState = this.props.value.getEditorState();
                 if ((0, _isSoftNewlineEvent2["default"])(event)) {
                     var selection = editorState.getSelection();
-                    if (selection.isCollapsed()) {
-                        this._onChange(_draftJs.RichUtils.insertSoftNewline(editorState));
-                        // 2 soft newlines mean a new block
-                        var contentState = editorState.getCurrentContent(), blockKey = selection.getStartKey(), selectionFocusOffset = selection.getFocusOffset(), block = contentState.getBlockForKey(blockKey), blockText = block.getText(), charCodeAtOffset = blockText.charCodeAt(selectionFocusOffset - 1);
-                        if (10 === charCodeAtOffset) {
-                            // remove the extra newline char
-                            var deleteSelection = selection.merge({
-                                anchorOffset: selectionFocusOffset - 1,
-                                focusOffset: selectionFocusOffset
-                            }), newContent = _draftJs.Modifier.removeRange(contentState, deleteSelection, "forward"), newSelection = newContent.getSelectionAfter();
-                            newContent = _draftJs.Modifier.splitBlock(newContent, newSelection), this._onChange(_draftJs.EditorState.push(editorState, newContent, "insert-fragment"));
-                        }
-                    } else {
-                        var content = editorState.getCurrentContent(), _newContent = _draftJs.Modifier.removeRange(content, selection, "forward"), _newSelection = _newContent.getSelectionAfter(), _block = _newContent.getBlockForKey(_newSelection.getStartKey());
-                        _newContent = _draftJs.Modifier.insertText(_newContent, _newSelection, "\n", _block.getInlineStyleAt(_newSelection.getStartOffset()), null), 
-                        this._onChange(_draftJs.EditorState.push(editorState, _newContent, "insert-fragment"));
+                    if (selection.isCollapsed()) this._onChange(_draftJs.RichUtils.insertSoftNewline(editorState)); else {
+                        var content = editorState.getCurrentContent(), newContent = _draftJs.Modifier.removeRange(content, selection, "forward"), newSelection = newContent.getSelectionAfter(), block = newContent.getBlockForKey(newSelection.getStartKey());
+                        newContent = _draftJs.Modifier.insertText(newContent, newSelection, "\n", block.getInlineStyleAt(newSelection.getStartOffset()), null), 
+                        this._onChange(_draftJs.EditorState.push(editorState, newContent, "insert-fragment"));
                     }
                     return !0;
                 }
@@ -3357,9 +3345,18 @@ function(module, exports, __webpack_require__) {
 }, /* 10 */
 /***/
 function(module, exports) {
+    function defaultSetTimout() {
+        throw new Error("setTimeout has not been defined");
+    }
+    function defaultClearTimeout() {
+        throw new Error("clearTimeout has not been defined");
+    }
     function runTimeout(fun) {
         if (cachedSetTimeout === setTimeout) //normal enviroments in sane situations
         return setTimeout(fun, 0);
+        // if setTimeout wasn't available but was latter defined
+        if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) return cachedSetTimeout = setTimeout, 
+        setTimeout(fun, 0);
         try {
             // when when somebody has screwed with setTimeout but no I.E. maddness
             return cachedSetTimeout(fun, 0);
@@ -3376,6 +3373,9 @@ function(module, exports) {
     function runClearTimeout(marker) {
         if (cachedClearTimeout === clearTimeout) //normal enviroments in sane situations
         return clearTimeout(marker);
+        // if clearTimeout wasn't available but was latter defined
+        if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) return cachedClearTimeout = clearTimeout, 
+        clearTimeout(marker);
         try {
             // when when somebody has screwed with setTimeout but no I.E. maddness
             return cachedClearTimeout(marker);
@@ -3414,18 +3414,14 @@ function(module, exports) {
     var cachedSetTimeout, cachedClearTimeout, process = module.exports = {};
     !function() {
         try {
-            cachedSetTimeout = setTimeout;
+            cachedSetTimeout = "function" == typeof setTimeout ? setTimeout : defaultSetTimout;
         } catch (e) {
-            cachedSetTimeout = function() {
-                throw new Error("setTimeout is not defined");
-            };
+            cachedSetTimeout = defaultSetTimout;
         }
         try {
-            cachedClearTimeout = clearTimeout;
+            cachedClearTimeout = "function" == typeof clearTimeout ? clearTimeout : defaultClearTimeout;
         } catch (e) {
-            cachedClearTimeout = function() {
-                throw new Error("clearTimeout is not defined");
-            };
+            cachedClearTimeout = defaultClearTimeout;
         }
     }();
     var currentQueue, queue = [], draining = !1, queueIndex = -1;
@@ -11951,9 +11947,21 @@ function(module, exports, __webpack_require__) {
 }, /* 152 */
 /***/
 function(module, exports, __webpack_require__) {
+    /**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule isSoftNewlineEvent
+	 * @typechecks
+	 * 
+	 */
     "use strict";
     function isSoftNewlineEvent(e) {
-        return e.which === Keys.RETURN;
+        return e.which === Keys.RETURN && (e.getModifierState("Shift") || e.getModifierState("Alt") || e.getModifierState("Control"));
     }
     var Keys = __webpack_require__(46);
     module.exports = isSoftNewlineEvent;
