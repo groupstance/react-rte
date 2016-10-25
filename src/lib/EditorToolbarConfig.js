@@ -21,8 +21,6 @@ export const INLINE_STYLE_BUTTONS: StyleConfigList = [
   {label: 'Bold', style: 'BOLD'},
   {label: 'Italic', style: 'ITALIC'},
   {label: 'Strikethrough', style: 'STRIKETHROUGH'},
-  {label: 'Monospace', style: 'CODE'},
-  {label: 'Underline', style: 'UNDERLINE'},
 ];
 
 export const BLOCK_TYPE_DROPDOWN: StyleConfigList = [
@@ -47,7 +45,7 @@ export const BLOCK_TYPE_BUTTONS: StyleConfigList = [
 ];
 
 let EditorToolbarConfig: ToolbarConfig = {
-  display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'LINK_BUTTONS', 'BLOCK_TYPE_DROPDOWN', 'HISTORY_BUTTONS'],
+  display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'HISTORY_BUTTONS'],
   INLINE_STYLE_BUTTONS,
   BLOCK_TYPE_DROPDOWN,
   BLOCK_TYPE_BUTTONS,
