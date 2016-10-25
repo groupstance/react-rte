@@ -21678,6 +21678,10 @@
 
 	var _LinkDecorator2 = _interopRequireDefault(_LinkDecorator);
 
+	var _composite = __webpack_require__(361);
+
+	var _composite2 = _interopRequireDefault(_composite);
+
 	var _classnames = __webpack_require__(316);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
@@ -21686,13 +21690,15 @@
 
 	var _classAutobind2 = _interopRequireDefault(_classAutobind);
 
-	var _events = __webpack_require__(361);
+	var _events = __webpack_require__(362);
+
+	var _events2 = _interopRequireDefault(_events);
 
 	var _draftJsUtils = __webpack_require__(305);
 
-	__webpack_require__(362);
+	__webpack_require__(363);
 
-	var _RichTextEditor = __webpack_require__(364);
+	var _RichTextEditor = __webpack_require__(365);
 
 	var _RichTextEditor2 = _interopRequireDefault(_RichTextEditor);
 
@@ -21707,11 +21713,6 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	// $FlowIssue - Flow doesn't understand CSS Modules
-
-	// $FlowIssue - Flow doesn't understand CSS Modules
-
 
 	var MAX_LIST_DEPTH = 2;
 
@@ -21733,7 +21734,7 @@
 
 	    var _this = _possibleConstructorReturn(this, (RichTextEditor.__proto__ || Object.getPrototypeOf(RichTextEditor)).apply(this, arguments));
 
-	    _this._keyEmitter = new _events.EventEmitter();
+	    _this._keyEmitter = new _events2.default();
 	    (0, _classAutobind2.default)(_this);
 	    return _this;
 	  }
@@ -21752,8 +21753,10 @@
 	      var customStyleMap = _props.customStyleMap;
 	      var readOnly = _props.readOnly;
 	      var disabled = _props.disabled;
+	      var toolbarConfig = _props.toolbarConfig;
+	      var blockStyleFn = _props.blockStyleFn;
 
-	      var otherProps = _objectWithoutProperties(_props, ['value', 'className', 'toolbarClassName', 'editorClassName', 'placeholder', 'customStyleMap', 'readOnly', 'disabled']);
+	      var otherProps = _objectWithoutProperties(_props, ['value', 'className', 'toolbarClassName', 'editorClassName', 'placeholder', 'customStyleMap', 'readOnly', 'disabled', 'toolbarConfig', 'blockStyleFn']);
 
 	      var editorState = value.getEditorState();
 	      customStyleMap = customStyleMap ? _extends({}, styleMap, customStyleMap) : styleMap;
@@ -21771,7 +21774,8 @@
 	          keyEmitter: this._keyEmitter,
 	          editorState: editorState,
 	          onChange: this._onChange,
-	          focusEditor: this._focus
+	          focusEditor: this._focus,
+	          toolbarConfig: toolbarConfig
 	        });
 	      }
 	      return _react2.default.createElement(
@@ -21782,7 +21786,7 @@
 	          'div',
 	          { className: combinedEditorClassName },
 	          _react2.default.createElement(_draftJs.Editor, _extends({}, otherProps, {
-	            blockStyleFn: getBlockStyle,
+	            blockStyleFn: (0, _composite2.default)(defaultBlockStyleFn, blockStyleFn),
 	            customStyleMap: customStyleMap,
 	            editorState: editorState,
 	            handleReturn: this._handleReturn,
@@ -21844,8 +21848,8 @@
 	          var content = editorState.getCurrentContent();
 	          var newContent = _draftJs.Modifier.removeRange(content, selection, 'forward');
 	          var newSelection = newContent.getSelectionAfter();
-	          var block = newContent.getBlockForKey(newSelection.getStartKey());
-	          newContent = _draftJs.Modifier.insertText(newContent, newSelection, '\n', block.getInlineStyleAt(newSelection.getStartOffset()), null);
+	          var _block = newContent.getBlockForKey(newSelection.getStartKey());
+	          newContent = _draftJs.Modifier.insertText(newContent, newSelection, '\n', _block.getInlineStyleAt(newSelection.getStartOffset()), null);
 	          this._onChange(_draftJs.EditorState.push(editorState, newContent, 'insert-fragment'));
 	        }
 	        return true;
@@ -21864,9 +21868,9 @@
 	      if (selection.isCollapsed()) {
 	        var contentState = editorState.getCurrentContent();
 	        var blockKey = selection.getStartKey();
-	        var block = contentState.getBlockForKey(blockKey);
-	        if ((0, _isListItem2.default)(block) && block.getLength() === 0) {
-	          var depth = block.getDepth();
+	        var _block2 = contentState.getBlockForKey(blockKey);
+	        if ((0, _isListItem2.default)(_block2) && _block2.getLength() === 0) {
+	          var depth = _block2.getDepth();
 	          var newState = depth === 0 ? (0, _changeBlockType2.default)(editorState, blockKey, _draftJsUtils.BLOCK_TYPE.UNSTYLED) : (0, _changeBlockDepth2.default)(editorState, blockKey, depth - 1);
 	          this._onChange(newState);
 	          return true;
@@ -21886,10 +21890,10 @@
 	      if (selection.isCollapsed()) {
 	        var contentState = editorState.getCurrentContent();
 	        var blockKey = selection.getStartKey();
-	        var block = contentState.getBlockForKey(blockKey);
-	        if (!(0, _isListItem2.default)(block) && block.getType() !== _draftJsUtils.BLOCK_TYPE.UNSTYLED) {
+	        var _block3 = contentState.getBlockForKey(blockKey);
+	        if (!(0, _isListItem2.default)(_block3) && _block3.getType() !== _draftJsUtils.BLOCK_TYPE.UNSTYLED) {
 	          // If cursor is at end.
-	          if (block.getLength() === selection.getStartOffset()) {
+	          if (_block3.getLength() === selection.getStartOffset()) {
 	            var newEditorState = (0, _insertBlockAfter2.default)(editorState, blockKey, _draftJsUtils.BLOCK_TYPE.UNSTYLED);
 	            this._onChange(newEditorState);
 	            return true;
@@ -21956,7 +21960,7 @@
 	exports.default = RichTextEditor;
 
 
-	function getBlockStyle(block) {
+	function defaultBlockStyleFn(block) {
 	  var result = _RichTextEditor2.default.block;
 	  switch (block.getType()) {
 	    case 'unstyled':
@@ -21976,8 +21980,8 @@
 	  return _EditorValue2.default.createEmpty(decorator);
 	}
 
-	function createValueFromString(markup, format) {
-	  return _EditorValue2.default.createFromString(markup, format, decorator);
+	function createValueFromString(markup, format, options) {
+	  return _EditorValue2.default.createFromString(markup, format, decorator, options);
 	}
 
 	// $FlowIssue - This should probably not be done this way.
@@ -39904,6 +39908,8 @@
 
 	var _EditorToolbarConfig = __webpack_require__(313);
 
+	var _EditorToolbarConfig2 = _interopRequireDefault(_EditorToolbarConfig);
+
 	var _StyleButton = __webpack_require__(314);
 
 	var _StyleButton2 = _interopRequireDefault(_StyleButton);
@@ -39952,9 +39958,6 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	// $FlowIssue - Flow doesn't understand CSS Modules
-
-
 	var EditorToolbar = function (_Component) {
 	  _inherits(EditorToolbar, _Component);
 
@@ -39985,29 +39988,59 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var className = this.props.className;
+	      var _this2 = this;
 
+	      var _props = this.props;
+	      var className = _props.className;
+	      var toolbarConfig = _props.toolbarConfig;
+
+	      if (toolbarConfig == null) {
+	        toolbarConfig = _EditorToolbarConfig2.default;
+	      }
+	      var display = toolbarConfig.display || _EditorToolbarConfig2.default.display;
+	      var buttonsGroups = display.map(function (groupName) {
+	        switch (groupName) {
+	          case 'INLINE_STYLE_BUTTONS':
+	            {
+	              return _this2._renderInlineStyleButtons(groupName, toolbarConfig);
+	            }
+	          case 'BLOCK_TYPE_DROPDOWN':
+	            {
+	              return _this2._renderBlockTypeDropdown(groupName, toolbarConfig);
+	            }
+	          case 'LINK_BUTTONS':
+	            {
+	              return _this2._renderLinkButtons(groupName, toolbarConfig);
+	            }
+	          case 'BLOCK_TYPE_BUTTONS':
+	            {
+	              return _this2._renderBlockTypeButtons(groupName, toolbarConfig);
+	            }
+	          case 'HISTORY_BUTTONS':
+	            {
+	              return _this2._renderUndoRedo(groupName, toolbarConfig);
+	            }
+	        }
+	      });
 	      return _react2.default.createElement(
 	        'div',
 	        { className: (0, _classnames2.default)(_EditorToolbar2.default.root, className) },
-	        this._renderInlineStyleButtons(),
-	        this._renderBlockTypeButtons(),
-	        this._renderUndoRedo()
+	        buttonsGroups
 	      );
 	    }
 	  }, {
 	    key: '_renderBlockTypeDropdown',
-	    value: function _renderBlockTypeDropdown() {
+	    value: function _renderBlockTypeDropdown(name, toolbarConfig) {
 	      var blockType = this._getCurrentBlockType();
-	      var choices = new Map(_EditorToolbarConfig.BLOCK_TYPE_DROPDOWN.map(function (type) {
-	        return [type.style, type.label];
+	      var choices = new Map((toolbarConfig.BLOCK_TYPE_DROPDOWN || []).map(function (type) {
+	        return [type.style, { label: type.label, className: type.className }];
 	      }));
 	      if (!choices.has(blockType)) {
 	        blockType = Array.from(choices.keys())[0];
 	      }
 	      return _react2.default.createElement(
 	        _ButtonGroup2.default,
-	        null,
+	        { key: name },
 	        _react2.default.createElement(_Dropdown2.default, {
 	          choices: choices,
 	          selectedKey: blockType,
@@ -40017,51 +40050,53 @@
 	    }
 	  }, {
 	    key: '_renderBlockTypeButtons',
-	    value: function _renderBlockTypeButtons() {
-	      var _this2 = this;
+	    value: function _renderBlockTypeButtons(name, toolbarConfig) {
+	      var _this3 = this;
 
 	      var blockType = this._getCurrentBlockType();
-	      var buttons = _EditorToolbarConfig.BLOCK_TYPE_BUTTONS.map(function (type, index) {
+	      var buttons = (toolbarConfig.BLOCK_TYPE_BUTTONS || []).map(function (type, index) {
 	        return _react2.default.createElement(_StyleButton2.default, {
 	          key: String(index),
 	          isActive: type.style === blockType,
 	          label: type.label,
-	          onToggle: _this2._toggleBlockType,
-	          style: type.style
+	          onToggle: _this3._toggleBlockType,
+	          style: type.style,
+	          className: type.className
 	        });
 	      });
 	      return _react2.default.createElement(
 	        _ButtonGroup2.default,
-	        null,
+	        { key: name },
 	        buttons
 	      );
 	    }
 	  }, {
 	    key: '_renderInlineStyleButtons',
-	    value: function _renderInlineStyleButtons() {
-	      var _this3 = this;
+	    value: function _renderInlineStyleButtons(name, toolbarConfig) {
+	      var _this4 = this;
 
 	      var editorState = this.props.editorState;
 
 	      var currentStyle = editorState.getCurrentInlineStyle();
-	      var buttons = _EditorToolbarConfig.INLINE_STYLE_BUTTONS.map(function (type, index) {
+	      var buttons = (toolbarConfig.INLINE_STYLE_BUTTONS || []).map(function (type, index) {
 	        return _react2.default.createElement(_StyleButton2.default, {
 	          key: String(index),
 	          isActive: currentStyle.has(type.style),
 	          label: type.label,
-	          onToggle: _this3._toggleInlineStyle,
-	          style: type.style
+	          onToggle: _this4._toggleInlineStyle,
+	          style: type.style,
+	          className: type.className
 	        });
 	      });
 	      return _react2.default.createElement(
 	        _ButtonGroup2.default,
-	        null,
+	        { key: name },
 	        buttons
 	      );
 	    }
 	  }, {
 	    key: '_renderLinkButtons',
-	    value: function _renderLinkButtons() {
+	    value: function _renderLinkButtons(name) {
 	      var editorState = this.props.editorState;
 
 	      var selection = editorState.getSelection();
@@ -40071,7 +40106,7 @@
 	      var shouldShowLinkButton = hasSelection || isCursorOnLink;
 	      return _react2.default.createElement(
 	        _ButtonGroup2.default,
-	        null,
+	        { key: name },
 	        _react2.default.createElement(_PopoverIconButton2.default, {
 	          label: 'Link',
 	          iconName: 'link',
@@ -40091,14 +40126,14 @@
 	    }
 	  }, {
 	    key: '_renderUndoRedo',
-	    value: function _renderUndoRedo() {
+	    value: function _renderUndoRedo(name) {
 	      var editorState = this.props.editorState;
 
 	      var canUndo = editorState.getUndoStack().size !== 0;
 	      var canRedo = editorState.getRedoStack().size !== 0;
 	      return _react2.default.createElement(
 	        _ButtonGroup2.default,
-	        null,
+	        { key: name },
 	        _react2.default.createElement(_IconButton2.default, {
 	          label: 'Undo',
 	          iconName: 'undo',
@@ -40223,11 +40258,11 @@
 	  }, {
 	    key: '_focusEditor',
 	    value: function _focusEditor() {
-	      var _this4 = this;
+	      var _this5 = this;
 
 	      // Hacky: Wait to focus the editor so we don't lose selection.
 	      setTimeout(function () {
-	        _this4.props.focusEditor();
+	        _this5.props.focusEditor();
 	      }, 50);
 	    }
 	  }]);
@@ -40251,11 +40286,14 @@
 	var BLOCK_TYPE_DROPDOWN = exports.BLOCK_TYPE_DROPDOWN = [{ label: 'Normal', style: 'unstyled' }, { label: 'Heading Large', style: 'header-one' }, { label: 'Heading Medium', style: 'header-two' }, { label: 'Heading Small', style: 'header-three' }, { label: 'Heading 4', style: 'header-four' }, { label: 'Heading 5', style: 'header-five' }, { label: 'Heading 6', style: 'header-six' }, { label: 'Code Block', style: 'code-block' }];
 	var BLOCK_TYPE_BUTTONS = exports.BLOCK_TYPE_BUTTONS = [{ label: 'UL', style: 'unordered-list-item' }, { label: 'OL', style: 'ordered-list-item' }, { label: 'H1', style: 'header-one' }, { label: 'H2', style: 'header-two' }, { label: 'H3', style: 'header-three' }, { label: 'H4', style: 'header-four' }, { label: 'H5', style: 'header-five' }, { label: 'H6', style: 'header-six' }];
 
-	exports.default = {
+	var EditorToolbarConfig = {
+	  display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'HISTORY_BUTTONS'],
 	  INLINE_STYLE_BUTTONS: INLINE_STYLE_BUTTONS,
 	  BLOCK_TYPE_DROPDOWN: BLOCK_TYPE_DROPDOWN,
 	  BLOCK_TYPE_BUTTONS: BLOCK_TYPE_BUTTONS
 	};
+
+	exports.default = EditorToolbarConfig;
 
 /***/ },
 /* 314 */
@@ -40381,9 +40419,6 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	// $FlowIssue - Flow doesn't understand CSS Modules
-
 
 	// TODO: Use a more specific type here.
 	var IconButton = function (_Component) {
@@ -40521,9 +40556,6 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	// $FlowIssue - Flow doesn't understand CSS Modules
-
 
 	// TODO: Use a more specific type here.
 	var Button = function (_Component) {
@@ -40994,9 +41026,6 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	// $FlowIssue - Flow doesn't understand CSS Modules
-
-
 	exports.default = ButtonWrap;
 
 	var _react = __webpack_require__(1);
@@ -41274,9 +41303,6 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	// $FlowIssue - Flow doesn't understand CSS Modules
-
-
 	var InputPopover = function (_Component) {
 	  _inherits(InputPopover, _Component);
 
@@ -41394,9 +41420,6 @@
 	});
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	// $FlowIssue - Flow doesn't understand CSS Modules
-
 
 	exports.default = ButtonGroup;
 
@@ -41548,9 +41571,6 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	// $FlowIssue - Flow doesn't understand CSS Modules
-
-
 	var Dropdown = function (_Component) {
 	  _inherits(Dropdown, _Component);
 
@@ -41574,7 +41594,8 @@
 	      var otherProps = _objectWithoutProperties(_props, ['choices', 'selectedKey', 'className']);
 
 	      className = (0, _classnames2.default)(className, _Dropdown2.default.root);
-	      var selectedValue = selectedKey == null ? '' : choices.get(selectedKey);
+	      var selectedItem = selectedKey == null ? null : choices.get(selectedKey);
+	      var selectedValue = selectedItem && selectedItem.label || '';
 	      return _react2.default.createElement(
 	        'span',
 	        { className: className, title: selectedValue },
@@ -41606,11 +41627,13 @@
 	        var _ref2 = _slicedToArray(_ref, 2);
 
 	        var key = _ref2[0];
-	        var text = _ref2[1];
+	        var _ref2$ = _ref2[1];
+	        var label = _ref2$.label;
+	        var className = _ref2$.className;
 	        return _react2.default.createElement(
 	          'option',
-	          { key: key, value: key },
-	          text
+	          { key: key, value: key, className: className },
+	          label
 	        );
 	      });
 	    }
@@ -41656,7 +41679,7 @@
 
 
 	// module
-	exports.push([module.id, ".Dropdown__root___3ALmx {\n  display: inline-block;\n  position: relative;\n  line-height: 22px;\n  vertical-align: top;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n}\n\n.Dropdown__root___3ALmx select {\n  position: relative;\n  z-index: 2;\n  display: inline-block;\n  box-sizing: border-box;\n  height: 30px;\n  line-height: inherit;\n  font-family: inherit;\n  font-size: inherit;\n  color: inherit;\n  margin: 0;\n  padding: 0;\n  border: 4px solid transparent;\n  border-right-width: 10px;\n  border-left-width: 5px;\n  background: none transparent;\n  opacity: 0;\n  cursor: pointer;\n}\n\n.Dropdown__root___3ALmx .Dropdown__value___34Py9 {\n  display: block;\n  position: absolute;\n  z-index: 1;\n  left: 0;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  line-height: 23px;\n  border: 1px solid #999;\n  border-radius: 2px;\n  padding: 3px;\n  padding-right: 33px;\n  padding-left: 12px;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n}\n\n.Dropdown__root___3ALmx .Dropdown__value___34Py9::before,\n.Dropdown__root___3ALmx .Dropdown__value___34Py9::after {\n  display: block;\n  content: \"\";\n  position: absolute;\n  top: 50%;\n  right: 10px;\n  width: 0;\n  height: 0;\n  border: 4px solid transparent;\n}\n\n.Dropdown__root___3ALmx .Dropdown__value___34Py9::before {\n  margin-top: -10px;\n  border-bottom-color: #555;\n}\n\n.Dropdown__root___3ALmx .Dropdown__value___34Py9::after {\n  margin-top: 1px;\n  border-top-color: #555;\n}\n\n.Dropdown__root___3ALmx select:focus + .Dropdown__value___34Py9 {\n  border-color: #66afe9;\n}\n\n/* On Webkit we can style <select> to be transparant without turning off the\n   default focus styles. This is better for accessibility. */\n@media screen and (-webkit-min-device-pixel-ratio:0) {\n  .Dropdown__root___3ALmx select {\n    opacity: 1;\n    color: inherit;\n    -webkit-appearance: none;\n    border-left-width: 12px;\n    border-right-width: 35px;\n  }\n\n  .Dropdown__root___3ALmx select + .Dropdown__value___34Py9 {\n    color: transparent;\n  }\n\n  .Dropdown__root___3ALmx select:focus + .Dropdown__value___34Py9 {\n    border-color: #999;\n  }\n}\n", ""]);
+	exports.push([module.id, ".Dropdown__root___3ALmx {\n  display: inline-block;\n  position: relative;\n  line-height: 22px;\n  vertical-align: top;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n\n.Dropdown__root___3ALmx select {\n  position: relative;\n  z-index: 2;\n  display: inline-block;\n  box-sizing: border-box;\n  height: 30px;\n  line-height: inherit;\n  font-family: inherit;\n  font-size: inherit;\n  color: inherit;\n  margin: 0;\n  padding: 0;\n  border: 4px solid transparent;\n  border-right-width: 10px;\n  border-left-width: 5px;\n  background: none transparent;\n  opacity: 0;\n  cursor: pointer;\n}\n\n.Dropdown__root___3ALmx .Dropdown__value___34Py9 {\n  display: block;\n  position: absolute;\n  z-index: 1;\n  left: 0;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  line-height: 23px;\n  border: 1px solid #999;\n  border-radius: 2px;\n  padding: 3px;\n  padding-right: 33px;\n  padding-left: 12px;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n}\n\n.Dropdown__root___3ALmx .Dropdown__value___34Py9::before,\n.Dropdown__root___3ALmx .Dropdown__value___34Py9::after {\n  display: block;\n  content: \"\";\n  position: absolute;\n  top: 50%;\n  right: 10px;\n  width: 0;\n  height: 0;\n  border: 4px solid transparent;\n}\n\n.Dropdown__root___3ALmx .Dropdown__value___34Py9::before {\n  margin-top: -10px;\n  border-bottom-color: #555;\n}\n\n.Dropdown__root___3ALmx .Dropdown__value___34Py9::after {\n  margin-top: 1px;\n  border-top-color: #555;\n}\n\n.Dropdown__root___3ALmx select:focus + .Dropdown__value___34Py9 {\n  border-color: #66afe9;\n}\n\n/* On Webkit we can style <select> to be transparant without turning off the\n   default focus styles. This is better for accessibility. */\n@media screen and (-webkit-min-device-pixel-ratio:0) {\n  .Dropdown__root___3ALmx select {\n    opacity: 1;\n    color: inherit;\n    -webkit-appearance: none;\n    border-left-width: 12px;\n    border-right-width: 35px;\n  }\n\n  .Dropdown__root___3ALmx select + .Dropdown__value___34Py9 {\n    color: transparent;\n  }\n\n  .Dropdown__root___3ALmx select:focus + .Dropdown__value___34Py9 {\n    border-color: #999;\n  }\n}\n", ""]);
 
 	// exports
 	exports.locals = {
@@ -41790,7 +41813,7 @@
 
 
 	// module
-	exports.push([module.id, ".EditorToolbar__root___3_Aqz {\n  font-family: 'Helvetica', sans-serif;\n  font-size: 14px;\n  margin-bottom: -5px;\n  user-select: none;\n}\n", ""]);
+	exports.push([module.id, ".EditorToolbar__root___3_Aqz {\n  font-family: 'Helvetica', sans-serif;\n  font-size: 14px;\n  margin: 0 10px;\n  padding: 10px 0 5px;\n  border-bottom: 1px solid #ddd;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n", ""]);
 
 	// exports
 	exports.locals = {
@@ -41845,17 +41868,17 @@
 	    }
 	  }, {
 	    key: 'toString',
-	    value: function toString(format) {
+	    value: function toString(format, options) {
 	      var fromCache = this._cache[format];
 	      if (fromCache != null) {
 	        return fromCache;
 	      }
-	      return this._cache[format] = _toString(this.getEditorState(), format);
+	      return this._cache[format] = _toString(this.getEditorState(), format, options);
 	    }
 	  }, {
 	    key: 'setContentFromString',
-	    value: function setContentFromString(markup, format) {
-	      var editorState = _draftJs.EditorState.push(this._editorState, fromString(markup, format), 'secondary-paste');
+	    value: function setContentFromString(markup, format, options) {
+	      var editorState = _draftJs.EditorState.push(this._editorState, fromString(markup, format, options), 'secondary-paste');
 	      return new EditorValue(editorState, _defineProperty({}, format, markup));
 	    }
 	  }], [{
@@ -41871,8 +41894,8 @@
 	    }
 	  }, {
 	    key: 'createFromString',
-	    value: function createFromString(markup, format, decorator) {
-	      var contentState = fromString(markup, format);
+	    value: function createFromString(markup, format, decorator, options) {
+	      var contentState = fromString(markup, format, options);
 	      var editorState = _draftJs.EditorState.createWithContent(contentState, decorator);
 	      return new EditorValue(editorState, _defineProperty({}, format, markup));
 	    }
@@ -41884,12 +41907,12 @@
 	exports.default = EditorValue;
 
 
-	function _toString(editorState, format) {
+	function _toString(editorState, format, options) {
 	  var contentState = editorState.getCurrentContent();
 	  switch (format) {
 	    case 'html':
 	      {
-	        return (0, _draftJsExportHtml.stateToHTML)(contentState);
+	        return (0, _draftJsExportHtml.stateToHTML)(contentState, options);
 	      }
 	    case 'markdown':
 	      {
@@ -41902,11 +41925,11 @@
 	  }
 	}
 
-	function fromString(markup, format) {
+	function fromString(markup, format, options) {
 	  switch (format) {
 	    case 'html':
 	      {
-	        return (0, _draftJsImportHtml.stateFromHTML)(markup);
+	        return (0, _draftJsImportHtml.stateFromHTML)(markup, options);
 	      }
 	    case 'markdown':
 	      {
@@ -44965,6 +44988,29 @@
 /* 361 */
 /***/ function(module, exports) {
 
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	function composite(defaultFunc, customFunc) {
+	  return function (input) {
+	    if (customFunc) {
+	      var result = customFunc(input);
+	      if (result != null) {
+	        return result;
+	      }
+	    }
+	    return defaultFunc(input);
+	  };
+	}
+
+	exports.default = composite;
+
+/***/ },
+/* 362 */
+/***/ function(module, exports) {
+
 	// Copyright Joyent, Inc. and other Node contributors.
 	//
 	// Permission is hereby granted, free of charge, to any person obtaining a
@@ -45270,13 +45316,13 @@
 
 
 /***/ },
-/* 362 */
+/* 363 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(363);
+	var content = __webpack_require__(364);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(322)(content, {});
@@ -45296,19 +45342,19 @@
 	}
 
 /***/ },
-/* 363 */
+/* 364 */
 /***/ function(module, exports) {
 
-	module.exports = "/**\n * We inherit the height of the container by default\n */\n\n.DraftEditor-root,\n.DraftEditor-editorContainer,\n.public-DraftEditor-content {\n  height: inherit;\n  text-align: initial;\n}\n\n.DraftEditor-root {\n  position: relative;\n}\n\n/**\n * Zero-opacity background used to allow focus in IE. Otherwise, clicks\n * fall through to the placeholder.\n */\n\n.DraftEditor-editorContainer {\n  background-color: rgba(255, 255, 255, 0);\n  /* Repair mysterious missing Safari cursor */\n  border-left: 0.1px solid transparent;\n  position: relative;\n  z-index: 1;\n}\n\n.public-DraftEditor-content {\n  outline: none;\n  white-space: pre-wrap;\n}\n\n.public-DraftEditor-block {\n  position: relative;\n}\n\n.DraftEditor-alignLeft .public-DraftEditor-block {\n  text-align: left;\n}\n\n.DraftEditor-alignLeft .public-DraftEditorPlaceholder-root {\n  left: 0;\n  text-align: left;\n}\n\n.DraftEditor-alignCenter .public-DraftEditor-block {\n  text-align: center;\n}\n\n.DraftEditor-alignCenter .public-DraftEditorPlaceholder-root {\n  margin: 0 auto;\n  text-align: center;\n  width: 100%;\n}\n\n.DraftEditor-alignRight .public-DraftEditor-block {\n  text-align: right;\n}\n\n.DraftEditor-alignRight .public-DraftEditorPlaceholder-root {\n  right: 0;\n  text-align: right;\n}\n/**\n * @providesModule DraftEditorPlaceholder\n */\n\n.public-DraftEditorPlaceholder-root {\n  color: #9197a3;\n  position: absolute;\n  z-index: 0;\n}\n\n.public-DraftEditorPlaceholder-hasFocus {\n  color: #bdc1c9;\n}\n\n.DraftEditorPlaceholder-hidden {\n  display: none;\n}\n/**\n * @providesModule DraftStyleDefault\n */\n\n.public-DraftStyleDefault-block {\n  position: relative;\n  white-space: pre-wrap;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-ltr {\n  direction: ltr;\n  text-align: left;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-rtl {\n  direction: rtl;\n  text-align: right;\n}\n\n/**\n * These rules provide appropriate text direction for counter pseudo-elements.\n */\n\n/* @noflip */\n\n.public-DraftStyleDefault-listLTR {\n  direction: ltr;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-listRTL {\n  direction: rtl;\n}\n\n/**\n * Default spacing for list container elements. Override with CSS as needed.\n */\n\n.public-DraftStyleDefault-ul,\n.public-DraftStyleDefault-ol {\n  margin: 16px 0;\n  padding: 0;\n}\n\n/**\n * Default counters and styles are provided for five levels of nesting.\n * If you require nesting beyond that level, you should use your own CSS\n * classes to do so. If you care about handling RTL languages, the rules you\n * create should look a lot like these.\n */\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth0.public-DraftStyleDefault-listLTR {\n  margin-left: 1.5em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth0.public-DraftStyleDefault-listRTL {\n  margin-right: 1.5em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth1.public-DraftStyleDefault-listLTR {\n  margin-left: 3em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth1.public-DraftStyleDefault-listRTL {\n  margin-right: 3em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth2.public-DraftStyleDefault-listLTR {\n  margin-left: 4.5em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth2.public-DraftStyleDefault-listRTL {\n  margin-right: 4.5em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth3.public-DraftStyleDefault-listLTR {\n  margin-left: 6em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth3.public-DraftStyleDefault-listRTL {\n  margin-right: 6em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth4.public-DraftStyleDefault-listLTR {\n  margin-left: 7.5em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth4.public-DraftStyleDefault-listRTL {\n  margin-right: 7.5em;\n}\n\n/**\n * Only use `square` list-style after the first two levels.\n */\n\n.public-DraftStyleDefault-unorderedListItem {\n  list-style-type: square;\n  position: relative;\n}\n\n.public-DraftStyleDefault-unorderedListItem.public-DraftStyleDefault-depth0 {\n  list-style-type: disc;\n}\n\n.public-DraftStyleDefault-unorderedListItem.public-DraftStyleDefault-depth1 {\n  list-style-type: circle;\n}\n\n/**\n * Ordered list item counters are managed with CSS, since all list nesting is\n * purely visual.\n */\n\n.public-DraftStyleDefault-orderedListItem {\n  list-style-type: none;\n  position: relative;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-listLTR:before {\n  left: -36px;\n  position: absolute;\n  text-align: right;\n  width: 30px;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-listRTL:before {\n  position: absolute;\n  right: -36px;\n  text-align: left;\n  width: 30px;\n}\n\n/**\n * Counters are reset in JavaScript. If you need different counter styles,\n * override these rules. If you need more nesting, create your own rules to\n * do so.\n */\n\n.public-DraftStyleDefault-orderedListItem:before {\n  content: counter(ol0) \". \";\n  counter-increment: ol0;\n}\n\n.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-depth1:before {\n  content: counter(ol1) \". \";\n  counter-increment: ol1;\n}\n\n.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-depth2:before {\n  content: counter(ol2) \". \";\n  counter-increment: ol2;\n}\n\n.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-depth3:before {\n  content: counter(ol3) \". \";\n  counter-increment: ol3;\n}\n\n.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-depth4:before {\n  content: counter(ol4) \". \";\n  counter-increment: ol4;\n}\n\n.public-DraftStyleDefault-depth0.public-DraftStyleDefault-reset {\n  counter-reset: ol0;\n}\n\n.public-DraftStyleDefault-depth1.public-DraftStyleDefault-reset {\n  counter-reset: ol1;\n}\n\n.public-DraftStyleDefault-depth2.public-DraftStyleDefault-reset {\n  counter-reset: ol2;\n}\n\n.public-DraftStyleDefault-depth3.public-DraftStyleDefault-reset {\n  counter-reset: ol3;\n}\n\n.public-DraftStyleDefault-depth4.public-DraftStyleDefault-reset {\n  counter-reset: ol4;\n}\n"
+	module.exports = "/**\n * We inherit the height of the container by default\n */\n\n.DraftEditor-root,\n.DraftEditor-editorContainer,\n.public-DraftEditor-content {\n  height: inherit;\n  text-align: initial;\n}\n\n.DraftEditor-root {\n  position: relative;\n}\n\n/**\n * Zero-opacity background used to allow focus in IE. Otherwise, clicks\n * fall through to the placeholder.\n */\n\n.DraftEditor-editorContainer {\n  background-color: rgba(255, 255, 255, 0);\n  /* Repair mysterious missing Safari cursor */\n  border: 1px solid transparent;\n  position: relative;\n  z-index: 1;\n}\n\n.public-DraftEditor-content {\n  outline: none;\n  white-space: pre-wrap;\n}\n\n.public-DraftEditor-block {\n  position: relative;\n}\n\n.DraftEditor-alignLeft .public-DraftEditor-block {\n  text-align: left;\n}\n\n.DraftEditor-alignLeft .public-DraftEditorPlaceholder-root {\n  left: 0;\n  text-align: left;\n}\n\n.DraftEditor-alignCenter .public-DraftEditor-block {\n  text-align: center;\n}\n\n.DraftEditor-alignCenter .public-DraftEditorPlaceholder-root {\n  margin: 0 auto;\n  text-align: center;\n  width: 100%;\n}\n\n.DraftEditor-alignRight .public-DraftEditor-block {\n  text-align: right;\n}\n\n.DraftEditor-alignRight .public-DraftEditorPlaceholder-root {\n  right: 0;\n  text-align: right;\n}\n/**\n * @providesModule DraftEditorPlaceholder\n */\n\n.public-DraftEditorPlaceholder-root {\n  color: #9197a3;\n  position: absolute;\n  z-index: 0;\n}\n\n.public-DraftEditorPlaceholder-hasFocus {\n  color: #bdc1c9;\n}\n\n.DraftEditorPlaceholder-hidden {\n  display: none;\n}\n/**\n * @providesModule DraftStyleDefault\n */\n\n.public-DraftStyleDefault-block {\n  position: relative;\n  white-space: pre-wrap;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-ltr {\n  direction: ltr;\n  text-align: left;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-rtl {\n  direction: rtl;\n  text-align: right;\n}\n\n/**\n * These rules provide appropriate text direction for counter pseudo-elements.\n */\n\n/* @noflip */\n\n.public-DraftStyleDefault-listLTR {\n  direction: ltr;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-listRTL {\n  direction: rtl;\n}\n\n/**\n * Default spacing for list container elements. Override with CSS as needed.\n */\n\n.public-DraftStyleDefault-ul,\n.public-DraftStyleDefault-ol {\n  margin: 16px 0;\n  padding: 0;\n}\n\n/**\n * Default counters and styles are provided for five levels of nesting.\n * If you require nesting beyond that level, you should use your own CSS\n * classes to do so. If you care about handling RTL languages, the rules you\n * create should look a lot like these.\n */\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth0.public-DraftStyleDefault-listLTR {\n  margin-left: 1.5em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth0.public-DraftStyleDefault-listRTL {\n  margin-right: 1.5em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth1.public-DraftStyleDefault-listLTR {\n  margin-left: 3em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth1.public-DraftStyleDefault-listRTL {\n  margin-right: 3em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth2.public-DraftStyleDefault-listLTR {\n  margin-left: 4.5em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth2.public-DraftStyleDefault-listRTL {\n  margin-right: 4.5em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth3.public-DraftStyleDefault-listLTR {\n  margin-left: 6em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth3.public-DraftStyleDefault-listRTL {\n  margin-right: 6em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth4.public-DraftStyleDefault-listLTR {\n  margin-left: 7.5em;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-depth4.public-DraftStyleDefault-listRTL {\n  margin-right: 7.5em;\n}\n\n/**\n * Only use `square` list-style after the first two levels.\n */\n\n.public-DraftStyleDefault-unorderedListItem {\n  list-style-type: square;\n  position: relative;\n}\n\n.public-DraftStyleDefault-unorderedListItem.public-DraftStyleDefault-depth0 {\n  list-style-type: disc;\n}\n\n.public-DraftStyleDefault-unorderedListItem.public-DraftStyleDefault-depth1 {\n  list-style-type: circle;\n}\n\n/**\n * Ordered list item counters are managed with CSS, since all list nesting is\n * purely visual.\n */\n\n.public-DraftStyleDefault-orderedListItem {\n  list-style-type: none;\n  position: relative;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-listLTR:before {\n  left: -36px;\n  position: absolute;\n  text-align: right;\n  width: 30px;\n}\n\n/* @noflip */\n\n.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-listRTL:before {\n  position: absolute;\n  right: -36px;\n  text-align: left;\n  width: 30px;\n}\n\n/**\n * Counters are reset in JavaScript. If you need different counter styles,\n * override these rules. If you need more nesting, create your own rules to\n * do so.\n */\n\n.public-DraftStyleDefault-orderedListItem:before {\n  content: counter(ol0) \". \";\n  counter-increment: ol0;\n}\n\n.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-depth1:before {\n  content: counter(ol1) \". \";\n  counter-increment: ol1;\n}\n\n.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-depth2:before {\n  content: counter(ol2) \". \";\n  counter-increment: ol2;\n}\n\n.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-depth3:before {\n  content: counter(ol3) \". \";\n  counter-increment: ol3;\n}\n\n.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-depth4:before {\n  content: counter(ol4) \". \";\n  counter-increment: ol4;\n}\n\n.public-DraftStyleDefault-depth0.public-DraftStyleDefault-reset {\n  counter-reset: ol0;\n}\n\n.public-DraftStyleDefault-depth1.public-DraftStyleDefault-reset {\n  counter-reset: ol1;\n}\n\n.public-DraftStyleDefault-depth2.public-DraftStyleDefault-reset {\n  counter-reset: ol2;\n}\n\n.public-DraftStyleDefault-depth3.public-DraftStyleDefault-reset {\n  counter-reset: ol3;\n}\n\n.public-DraftStyleDefault-depth4.public-DraftStyleDefault-reset {\n  counter-reset: ol4;\n}\n"
 
 /***/ },
-/* 364 */
+/* 365 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(365);
+	var content = __webpack_require__(366);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(322)(content, {"sourceMap":true});
@@ -45328,7 +45374,7 @@
 	}
 
 /***/ },
-/* 365 */
+/* 366 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(321)();
@@ -45336,7 +45382,7 @@
 
 
 	// module
-	exports.push([module.id, ".RichTextEditor__root___2QXK- {\n  background: #fff;\n  border: 1px solid #ddd;\n  border-radius: 3px;\n  font-family: 'Georgia', serif;\n  font-size: 14px;\n  padding: 10px;\n}\n\n.RichTextEditor__editor___1QqIU {\n  border-top: 1px solid #ddd;\n  cursor: text;\n  font-size: 16px;\n  margin-top: 10px;\n}\n\n.RichTextEditor__editor___1QqIU .public-DraftEditorPlaceholder-root,\n.RichTextEditor__editor___1QqIU .public-DraftEditor-content {\n  margin: 0 -10px -10px;\n  padding: 10px;\n}\n\n.RichTextEditor__editor___1QqIU .public-DraftEditor-content {\n  overflow: auto;\n}\n\n.RichTextEditor__hidePlaceholder___3WLid .public-DraftEditorPlaceholder-root {\n  display: none;\n}\n\n.RichTextEditor__editor___1QqIU .RichTextEditor__paragraph___3NTf9 {\n  margin: 0 0;\n}\n\n/* Consecutive code blocks are nested inside a single parent <pre> (like <li>\n  inside <ul>). Unstyle the parent and style the children. */\n.RichTextEditor__editor___1QqIU pre {\n  margin: 14px 0;\n}\n\n.RichTextEditor__editor___1QqIU .RichTextEditor__codeBlock____KD4Q {\n  background-color: #f3f3f3;\n  font-family: \"Inconsolata\", \"Menlo\", \"Consolas\", monospace;\n  font-size: 16px;\n  /* This should collapse with the margin around the parent <pre>. */\n  margin: 14px 0;\n  padding: 20px;\n}\n\n/* Hacky: Remove padding from inline <code> within code block. */\n.RichTextEditor__editor___1QqIU .RichTextEditor__codeBlock____KD4Q span[style] {\n  padding: 0 !important;\n}\n\n.RichTextEditor__editor___1QqIU .RichTextEditor__blockquote___1vCYl {\n  border-left: 5px solid #eee;\n  color: #666;\n  font-family: 'Hoefler Text', 'Georgia', serif;\n  font-style: italic;\n  margin: 16px 0;\n  padding: 10px 20px;\n}\n\n/* There shouldn't be margin outside the first/last blocks */\n.RichTextEditor__editor___1QqIU .RichTextEditor__block___2Vs_D:first-child,\n.RichTextEditor__editor___1QqIU pre:first-child,\n.RichTextEditor__editor___1QqIU ul:first-child,\n.RichTextEditor__editor___1QqIU ol:first-child {\n  margin-top: 0;\n}\n.RichTextEditor__editor___1QqIU .RichTextEditor__block___2Vs_D:last-child,\n.RichTextEditor__editor___1QqIU pre:last-child,\n.RichTextEditor__editor___1QqIU ul:last-child,\n.RichTextEditor__editor___1QqIU ol:last-child {\n  margin-bottom: 0;\n}\n", ""]);
+	exports.push([module.id, ".RichTextEditor__root___2QXK- {\n  background: #fff;\n  border: 1px solid #ddd;\n  border-radius: 3px;\n  font-family: 'Georgia', serif;\n  font-size: 14px;\n}\n\n.RichTextEditor__editor___1QqIU {\n  cursor: text;\n  font-size: 16px;\n}\n\n.RichTextEditor__editor___1QqIU .public-DraftEditorPlaceholder-root,\n.RichTextEditor__editor___1QqIU .public-DraftEditor-content {\n  margin: 0;\n  /* 1px is added as transparent border on .DraftEditor-editorContainer */\n  padding: 9px;\n}\n\n.RichTextEditor__editor___1QqIU .public-DraftEditor-content {\n  overflow: auto;\n}\n\n.RichTextEditor__hidePlaceholder___3WLid .public-DraftEditorPlaceholder-root {\n  display: none;\n}\n\n.RichTextEditor__editor___1QqIU .RichTextEditor__paragraph___3NTf9 {\n  margin: 0 0;\n}\n\n/* Consecutive code blocks are nested inside a single parent <pre> (like <li>\n  inside <ul>). Unstyle the parent and style the children. */\n.RichTextEditor__editor___1QqIU pre {\n  margin: 14px 0;\n}\n\n.RichTextEditor__editor___1QqIU .RichTextEditor__codeBlock____KD4Q {\n  background-color: #f3f3f3;\n  font-family: \"Inconsolata\", \"Menlo\", \"Consolas\", monospace;\n  font-size: 16px;\n  /* This should collapse with the margin around the parent <pre>. */\n  margin: 14px 0;\n  padding: 20px;\n}\n\n/* Hacky: Remove padding from inline <code> within code block. */\n.RichTextEditor__editor___1QqIU .RichTextEditor__codeBlock____KD4Q span[style] {\n  padding: 0 !important;\n}\n\n.RichTextEditor__editor___1QqIU .RichTextEditor__blockquote___1vCYl {\n  border-left: 5px solid #eee;\n  color: #666;\n  font-family: 'Hoefler Text', 'Georgia', serif;\n  font-style: italic;\n  margin: 16px 0;\n  padding: 10px 20px;\n}\n\n/* There shouldn't be margin outside the first/last blocks */\n.RichTextEditor__editor___1QqIU .RichTextEditor__block___2Vs_D:first-child,\n.RichTextEditor__editor___1QqIU pre:first-child,\n.RichTextEditor__editor___1QqIU ul:first-child,\n.RichTextEditor__editor___1QqIU ol:first-child {\n  margin-top: 0;\n}\n.RichTextEditor__editor___1QqIU .RichTextEditor__block___2Vs_D:last-child,\n.RichTextEditor__editor___1QqIU pre:last-child,\n.RichTextEditor__editor___1QqIU ul:last-child,\n.RichTextEditor__editor___1QqIU ol:last-child {\n  margin-bottom: 0;\n}\n", ""]);
 
 	// exports
 	exports.locals = {
