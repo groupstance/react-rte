@@ -12079,6 +12079,12 @@ function(module, exports) {
     }, {
         label: "Strikethrough",
         style: "STRIKETHROUGH"
+    }, {
+        label: "Monospace",
+        style: "CODE"
+    }, {
+        label: "Underline",
+        style: "UNDERLINE"
     } ], BLOCK_TYPE_DROPDOWN = exports.BLOCK_TYPE_DROPDOWN = [ {
         label: "Normal",
         style: "unstyled"
@@ -12092,15 +12098,6 @@ function(module, exports) {
         label: "Heading Small",
         style: "header-three"
     }, {
-        label: "Heading 4",
-        style: "header-four"
-    }, {
-        label: "Heading 5",
-        style: "header-five"
-    }, {
-        label: "Heading 6",
-        style: "header-six"
-    }, {
         label: "Code Block",
         style: "code-block"
     } ], BLOCK_TYPE_BUTTONS = exports.BLOCK_TYPE_BUTTONS = [ {
@@ -12110,25 +12107,10 @@ function(module, exports) {
         label: "OL",
         style: "ordered-list-item"
     }, {
-        label: "H1",
-        style: "header-one"
-    }, {
-        label: "H2",
-        style: "header-two"
-    }, {
-        label: "H3",
-        style: "header-three"
-    }, {
-        label: "H4",
-        style: "header-four"
-    }, {
-        label: "H5",
-        style: "header-five"
-    }, {
-        label: "H6",
-        style: "header-six"
+        label: "Blockquote",
+        style: "blockquote"
     } ], EditorToolbarConfig = {
-        display: [ "INLINE_STYLE_BUTTONS", "BLOCK_TYPE_BUTTONS", "HISTORY_BUTTONS" ],
+        display: [ "INLINE_STYLE_BUTTONS", "BLOCK_TYPE_BUTTONS", "LINK_BUTTONS", "BLOCK_TYPE_DROPDOWN", "HISTORY_BUTTONS" ],
         INLINE_STYLE_BUTTONS: INLINE_STYLE_BUTTONS,
         BLOCK_TYPE_DROPDOWN: BLOCK_TYPE_DROPDOWN,
         BLOCK_TYPE_BUTTONS: BLOCK_TYPE_BUTTONS

@@ -95,3 +95,11 @@ a {
 .editor-demo .react-rte-demo .public-DraftEditor-content {
   min-height: 110px;
 }
+
+.demo-toolbar {
+  border: 1px solid red;
+}
+
+button.th-button {
+  background: none red;
+}

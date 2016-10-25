@@ -21496,6 +21496,14 @@
 	      var format = _state.format;
 
 
+	      var toolbarConfig = {
+	        // Optionally specify the groups to display (displayed in the order listed).
+	        display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'HISTORY_BUTTONS'],
+	        INLINE_STYLE_BUTTONS: [{ label: 'Bold', style: 'BOLD', className: 'th-button' }, { label: 'Italic', style: 'ITALIC' }, { label: 'Underline', style: 'UNDERLINE' }],
+	        BLOCK_TYPE_DROPDOWN: [{ label: 'Normal', style: 'unstyled' }, { label: 'Heading Large', style: 'header-one' }, { label: 'Heading Medium', style: 'header-two' }, { label: 'Heading Small', style: 'header-three' }],
+	        BLOCK_TYPE_BUTTONS: [{ label: 'UL', style: 'unordered-list-item' }, { label: 'OL', style: 'ordered-list-item' }, { label: 'H1', style: 'header-one' }, { label: 'H2', style: 'header-two' }, { label: 'H3', style: 'header-three' }, { label: 'H4', style: 'header-four' }, { label: 'H5', style: 'header-five' }, { label: 'H6', style: 'header-six' }]
+	      };
+
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'editor-demo' },
@@ -21524,7 +21532,8 @@
 	            placeholder: 'Tell a story',
 	            toolbarClassName: 'demo-toolbar',
 	            editorClassName: 'demo-editor',
-	            readOnly: this.state.readOnly
+	            readOnly: this.state.readOnly,
+	            toolbarConfig: toolbarConfig
 	          })
 	        ),
 	        _react2.default.createElement(
@@ -40281,13 +40290,13 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var INLINE_STYLE_BUTTONS = exports.INLINE_STYLE_BUTTONS = [{ label: 'Bold', style: 'BOLD' }, { label: 'Italic', style: 'ITALIC' }, { label: 'Strikethrough', style: 'STRIKETHROUGH' }];
+	var INLINE_STYLE_BUTTONS = exports.INLINE_STYLE_BUTTONS = [{ label: 'Bold', style: 'BOLD' }, { label: 'Italic', style: 'ITALIC' }, { label: 'Strikethrough', style: 'STRIKETHROUGH' }, { label: 'Monospace', style: 'CODE' }, { label: 'Underline', style: 'UNDERLINE' }];
 
-	var BLOCK_TYPE_DROPDOWN = exports.BLOCK_TYPE_DROPDOWN = [{ label: 'Normal', style: 'unstyled' }, { label: 'Heading Large', style: 'header-one' }, { label: 'Heading Medium', style: 'header-two' }, { label: 'Heading Small', style: 'header-three' }, { label: 'Heading 4', style: 'header-four' }, { label: 'Heading 5', style: 'header-five' }, { label: 'Heading 6', style: 'header-six' }, { label: 'Code Block', style: 'code-block' }];
-	var BLOCK_TYPE_BUTTONS = exports.BLOCK_TYPE_BUTTONS = [{ label: 'UL', style: 'unordered-list-item' }, { label: 'OL', style: 'ordered-list-item' }, { label: 'H1', style: 'header-one' }, { label: 'H2', style: 'header-two' }, { label: 'H3', style: 'header-three' }, { label: 'H4', style: 'header-four' }, { label: 'H5', style: 'header-five' }, { label: 'H6', style: 'header-six' }];
+	var BLOCK_TYPE_DROPDOWN = exports.BLOCK_TYPE_DROPDOWN = [{ label: 'Normal', style: 'unstyled' }, { label: 'Heading Large', style: 'header-one' }, { label: 'Heading Medium', style: 'header-two' }, { label: 'Heading Small', style: 'header-three' }, { label: 'Code Block', style: 'code-block' }];
+	var BLOCK_TYPE_BUTTONS = exports.BLOCK_TYPE_BUTTONS = [{ label: 'UL', style: 'unordered-list-item' }, { label: 'OL', style: 'ordered-list-item' }, { label: 'Blockquote', style: 'blockquote' }];
 
 	var EditorToolbarConfig = {
-	  display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'HISTORY_BUTTONS'],
+	  display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'LINK_BUTTONS', 'BLOCK_TYPE_DROPDOWN', 'HISTORY_BUTTONS'],
 	  INLINE_STYLE_BUTTONS: INLINE_STYLE_BUTTONS,
 	  BLOCK_TYPE_DROPDOWN: BLOCK_TYPE_DROPDOWN,
 	  BLOCK_TYPE_BUTTONS: BLOCK_TYPE_BUTTONS
